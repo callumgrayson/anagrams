@@ -1,5 +1,5 @@
 # Anagrams
 
-Algorithms for finding anagrams in word lists. Creates a tree of all words in list for quick searching of candidate strings.
+Interface for finding anagrams in word lists. 
 
-Also, contains dicitionaries of various sizes and qualities.
+Also, contains accesses small and large dictionaries.
