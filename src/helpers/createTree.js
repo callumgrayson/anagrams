@@ -37,9 +37,9 @@ export const handleData = async (list) => {
 	return [ wordsObj, split ];
 };
 
-//
-
-export const checkAnagrams = async (inWord, inArr) => {
+export const checkAnagrams = async (iWord, inArr) => {
+	let inWord = iWord.trim().toLowerCase();
+	console.log('inWord', inWord);
 	let startSearch = Date.now();
 	const inLength = inWord.length;
 	const inWordSorted = inWord.split('').sort().join('');
