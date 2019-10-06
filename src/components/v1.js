@@ -22,6 +22,8 @@ const V1 = (props) => {
 	const [ wordsArray, setWordsArray ] = useState({});
 
 	const [ isFetching, setIsFetching ] = useState(false);
+	const [ isSearchLet, setIsSearchLet ] = useState(false);
+	const [ isSearchLen, setIsSearchLen ] = useState(false);
 
 	useEffect(
 		() => {
@@ -91,11 +93,13 @@ const V1 = (props) => {
 			// console.log('tree', tree);
 			const getAnagrams = async (inTerm) => {
 				// let anags = await checkAnagrams(inTerm, tree[listSize]);
+				setIsSearchLet(true);
 				let anags = await checkAnagrams(inTerm, wordsArray[listSize]);
 				if (searchTerm && !anags.length) {
 					anags = [ 'There are no anagrams' ];
 				}
 				setDisplayAnagrams(anags);
+				setIsSearchLet(false);
 			};
 
 			if (searchTerm && wordsArray.hasOwnProperty(listSize))
@@ -108,6 +112,7 @@ const V1 = (props) => {
 		() => {
 			// console.log('wordsArray', wordsArray);
 			const getAnagrams = async (inLength) => {
+				setIsSearchLen(true);
 				let anags = await getXLengthWords(
 					inLength,
 					wordsArray[listSize]
@@ -116,6 +121,7 @@ const V1 = (props) => {
 					anags = [ [ 'There are no anagrams' ] ];
 				}
 				setDisplayLengthAnagrams(anags);
+				setIsSearchLen(false);
 			};
 
 			if (searchNumber && wordsArray.hasOwnProperty(listSize))
@@ -172,7 +178,7 @@ const V1 = (props) => {
 					<option value="small">Small (58k)</option>
 					<option value="large">Large (230k)</option>
 				</select>
-				<Loader isFetching={isFetching} />
+				<Loader loading={isFetching} text="Loading" />
 			</div>
 			<div>
 				<h3>Anagrams by letters</h3>
@@ -193,12 +199,16 @@ const V1 = (props) => {
 				</div>
 
 				<div>
-					<ul>
-						{displayAnagrams &&
-							displayAnagrams.map((ana, i) => {
-								return <li key={`${i}${ana}`}>{ana}</li>;
-							})}
-					</ul>
+					{isSearchLet ? (
+						<Loader loading={isSearchLet} text="Searching" />
+					) : (
+						<ul>
+							{displayAnagrams &&
+								displayAnagrams.map((ana, i) => {
+									return <li key={`${i}${ana}`}>{ana}</li>;
+								})}
+						</ul>
+					)}
 				</div>
 			</div>
 
@@ -222,7 +232,10 @@ const V1 = (props) => {
 					)}
 				</div>
 				<div>
-					{displayLengthAnagrams.length > 0 &&
+					{isSearchLen ? (
+						<Loader loading={isSearchLen} text="Searching" />
+					) : (
+						displayLengthAnagrams.length > 0 &&
 						prepareLengthAnagrams(
 							displayLengthAnagrams
 						).map((obj) => {
@@ -244,7 +257,8 @@ const V1 = (props) => {
 									</ul>
 								</div>
 							);
-						})}
+						})
+					)}
 				</div>
 			</div>
 		</div>
