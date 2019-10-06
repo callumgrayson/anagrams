@@ -5,6 +5,8 @@ import {
 	checkAnagrams,
 	getXLengthWords
 } from '../helpers/createTree';
+import Loader from './Loader';
+import './v1.css';
 
 const V1 = (props) => {
 	const [ listSize, setListSize ] = useState('small');
@@ -18,6 +20,8 @@ const V1 = (props) => {
 	const [ displayLengthAnagrams, setDisplayLengthAnagrams ] = useState([]);
 	const [ tree, setTree ] = useState({});
 	const [ wordsArray, setWordsArray ] = useState({});
+
+	const [ isFetching, setIsFetching ] = useState(false);
 
 	useEffect(
 		() => {
@@ -52,6 +56,7 @@ const V1 = (props) => {
 
 				if (!localStorage.hasOwnProperty(listSize)) {
 					const url = getUrl();
+					setIsFetching(true);
 					const res = await fetch(url);
 					data = await res.text();
 					// console.log('data', data);
@@ -73,6 +78,7 @@ const V1 = (props) => {
 				const newArr = { ...wordsArray, [listSize]: wArr };
 				setTree(newTree);
 				setWordsArray(newArr);
+				setIsFetching(false);
 			};
 
 			getData();
@@ -153,7 +159,7 @@ const V1 = (props) => {
 		return outArr;
 	};
 	return (
-		<div>
+		<div className="v1">
 			<div>
 				<span>Dictionary size: </span>
 				<select
@@ -166,20 +172,26 @@ const V1 = (props) => {
 					<option value="small">Small (58k)</option>
 					<option value="large">Large (230k)</option>
 				</select>
+				<Loader isFetching={isFetching} />
 			</div>
 			<div>
 				<h3>Anagrams by letters</h3>
-				<form onSubmit={handleSubmit}>
-					<input
-						type="text"
-						value={searchInput}
-						onChange={handleChange}
-						maxLength={29}
-						placeholder="enter word/letters"
-						required
-					/>
-					<button onClick={handleSubmit}>Search</button>
-				</form>
+				<div className={`formBox${isFetching && ' isFetching'}`}>
+					{!isFetching && (
+						<form onSubmit={handleSubmit}>
+							<input
+								type="text"
+								value={searchInput}
+								onChange={handleChange}
+								maxLength={29}
+								placeholder="enter word/letters"
+								required
+							/>
+							<button onClick={handleSubmit}>Search</button>
+						</form>
+					)}
+				</div>
+
 				<div>
 					<ul>
 						{displayAnagrams &&
@@ -192,19 +204,23 @@ const V1 = (props) => {
 
 			<div>
 				<h3>Anagrams by length</h3>
-				<form onSubmit={handleLengthSubmit}>
-					<input
-						type="number"
-						min={2}
-						max={29}
-						value={searchNumberInput}
-						onChange={handleNumberChange}
-						placeholder="enter word length"
-						required
-						style={{ width: '173px' }}
-					/>
-					<button onClick={handleLengthSubmit}>Search</button>
-				</form>
+				<div className={`formBox${isFetching && ' isFetching'}`}>
+					{!isFetching && (
+						<form onSubmit={handleLengthSubmit}>
+							<input
+								type="number"
+								min={2}
+								max={29}
+								value={searchNumberInput}
+								onChange={handleNumberChange}
+								placeholder="enter word length"
+								required
+								style={{ width: '173px' }}
+							/>
+							<button onClick={handleLengthSubmit}>Search</button>
+						</form>
+					)}
+				</div>
 				<div>
 					{displayLengthAnagrams.length > 0 &&
 						prepareLengthAnagrams(
